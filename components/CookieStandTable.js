@@ -1,11 +1,19 @@
+import axios from 'axios';
+
 export default function ReportTable(props) {
     let rowTotal = 0
+
+    function deleteRow(key) {
+        axios.delete(`${props.url}${key}/`, props.config)
+        props.setUserInput(props.userInput.filter(item => item.id != key))
+    }
+
     return (
         <>
             {props.userInput ?
-                <div className="mx-9 relative shadow-md sm:rounded-lg">
+                <div className=" relative shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left bg-teal-600 rounded">
-                        <thead className="text-xs text-gray-50 uppercase bg-teal-600">
+                        <thead className="text-2xs text-black uppercase bg-teal-600 text-bold">
                             <tr>
                                 <th scope="col" className="py-3 px-6">
                                     Location
@@ -25,20 +33,29 @@ export default function ReportTable(props) {
                         <tbody>
 
                             {props.userInput.map((item, idx) => {
+                                let key = item.id
                                 return (
-                                    <tr class="bg-teal-300 border-b">
-                                        <th scope="row" class="py-4 px-6 font-bold text-black whitespace-nowrap">
-                                            {item.location}
+                                    <tr className="bg-teal-300 border-b" key={item.id}>
+                                        <th scope="row" className="py-4 px-6 font-bold text-black whitespace-nowrap">
+                                            <div className="">
+                                                {item.location}
+                                                <div className="float-right text-red-500">
+                                                    <button onClick={() => deleteRow(key)}>
+                                                        del
+                                                    </button>
+                                                </div>
+
+                                            </div>
                                         </th>
                                         {item.hourly_sales.map(hour => {
                                             rowTotal += hour
                                             return (
-                                                <td class="py-4 px-6">
+                                                <td className="py-4 px-6">
                                                     {hour}
                                                 </td>
                                             )
                                         })}
-                                        <td class="py-4 px-6">
+                                        <td className="py-4 px-6">
                                             {rowTotal / (idx + 1)}
                                         </td>
                                     </tr>
@@ -46,17 +63,17 @@ export default function ReportTable(props) {
                             })}
                         </tbody>
                         <tfoot>
-                            <th scope="col" className="py-3 px-6">
+                            <th scope="col" className="py-3 px-6 ">
                                 Totals
                             </th>
                             {props.columnTotals.map(item => {
                                 return (
-                                    <td class="py-4 px-6">
+                                    <td className="py-4 px-6">
                                         {item}
                                     </td>
                                 )
                             })}
-                            <td class="py-4 px-6">
+                            <td className="py-4 px-6">
                                 {rowTotal}
                             </td>
                         </tfoot>
